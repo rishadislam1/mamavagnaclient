@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./Form.css";
 
+
 const Form = () => {
   const [buyerName, setBuyerName] = useState("");
   const [buyerAddress, setBuyerAddress] = useState("");
@@ -27,39 +28,46 @@ const Form = () => {
   const [remarks, setRemarks] = useState("");
   const [bankName, setBankName] = useState("");
   const [loan, setLoan] = useState("");
+  const [file, setFile] = useState(null);
 
-  const handleSubmit = (e)=>{
+  const handleFileChange = (event) => {
+    setFile(event.target.files[0]);
+  };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('file', file);
     const data = {
-        buyerName,
-        buyerAddress,
-        phoneNumber,
-        carName,
-        showRoom,
-        sale,
-        condition,
-        model,
-        registration,
-        color,
-        buyPrice,
-        salePrice,
-        cost,
-        profit,
-        investor,
-        buyDate,
-        bookingDate,
-        deliveryDate,
-        registrationNumber,
-        importer,
-        profitShare,
-        officeIncome,
-        remarks,
-        bankName,
-        loan
-    }
-    console.log(data)
+      buyerName,
+      buyerAddress,
+      phoneNumber,
+      carName,
+      showRoom,
+      sale,
+      condition,
+      model,
+      registration,
+      color,
+      buyPrice,
+      salePrice,
+      cost,
+      profit,
+      investor,
+      buyDate,
+      bookingDate,
+      deliveryDate,
+      registrationNumber,
+      importer,
+      profitShare,
+      officeIncome,
+      remarks,
+      bankName,
+      loan,
+    };
+    console.log(data);
     e.target.reset();
-  }
+  };
 
   return (
     <div>
@@ -129,7 +137,8 @@ const Form = () => {
               className="block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none"
               id="file_input"
               type="file"
-              name="buyerDetails"
+              name="file"
+              onChange={handleFileChange}
             />
           </div>
         </div>
@@ -156,7 +165,6 @@ const Form = () => {
             <div className="flex gap-10 items-center mt-3">
               <div className="flex items-center">
                 <input
-                  checked
                   id="new"
                   type="radio"
                   value=""
@@ -173,7 +181,6 @@ const Form = () => {
               </div>
               <div className="flex items-center">
                 <input
-                  checked
                   id="default-radio-2"
                   type="radio"
                   value=""
@@ -215,7 +222,6 @@ const Form = () => {
             <div className="flex gap-10 items-center mt-3">
               <div className="flex items-center">
                 <input
-                  checked
                   id="recondition"
                   type="radio"
                   value=""
@@ -232,7 +238,6 @@ const Form = () => {
               </div>
               <div className="flex items-center">
                 <input
-                  checked
                   id="used"
                   type="radio"
                   value=""
