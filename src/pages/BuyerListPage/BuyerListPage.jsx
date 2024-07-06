@@ -1,4 +1,3 @@
-
 import Form from "../../Components/BuyerListComponents/Form";
 const BuyerListPage = () => {
   return (
@@ -6,10 +5,8 @@ const BuyerListPage = () => {
       <h1 className="text-3xl font-bold underline text-center mb-10">
         Add Buyer Data
       </h1>
-   
-      <Form/>
-  
- 
+
+      <Form />
     </div>
   );
 };

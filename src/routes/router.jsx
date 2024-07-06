@@ -6,15 +6,18 @@ import BuyerListPage from "../pages/BuyerListPage/BuyerListPage.jsx";
 import DashboardPage from "../pages/DashboardPage/DashboardPage.jsx";
 import LedgerPage from "../pages/LedgerPage/LedgerPage.jsx";
 import ReportPage from "../pages/ReportPage/ReportPage.jsx";
+import PrivateRoute from "./PrivateRoutes.jsx";
+import PublicRoute from "./PublicRoutes.jsx";
+import AddUserPage from "../pages/AdduserPage/AddUserPage.jsx";
 
 export const router = createBrowserRouter([
     {
         path: '/',
-        element: <LoginPage/>
+        element: <PublicRoute><LoginPage/></PublicRoute>
     },
     {
         path: '/user',
-        element: <MainLayout/>,
+        element: <PrivateRoute><MainLayout/></PrivateRoute>,
         children: [
             {
                 path: '/user/dashboard',
@@ -36,6 +39,11 @@ export const router = createBrowserRouter([
                 path: '/user/report',
                 element: <ReportPage/>
             },
+            {
+                path: '/user/addUser',
+                element: <AddUserPage/>
+            },
+            
         ]
     }
 ])

@@ -1,8 +1,12 @@
 import { useState } from "react";
 import "./Form.css";
-
+import axios from "axios";
+import { BASE_URL } from "../../../public/config";
+import Swal from "sweetalert2";
 
 const Form = () => {
+  const userName = JSON.parse(localStorage.getItem("user"));
+  const entryBy = userName?.data?.name;
   const [buyerName, setBuyerName] = useState("");
   const [buyerAddress, setBuyerAddress] = useState("");
   const [phoneNumber, setPhoneNumber] = useState();
@@ -34,39 +38,57 @@ const Form = () => {
     setFile(event.target.files[0]);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('file', file);
+    // const formData = new FormData();
+    // formData.append('file', file);
     const data = {
-      buyerName,
-      buyerAddress,
-      phoneNumber,
-      carName,
-      showRoom,
-      sale,
-      condition,
-      model,
-      registration,
-      color,
-      buyPrice,
-      salePrice,
-      cost,
-      profit,
-      investor,
-      buyDate,
-      bookingDate,
-      deliveryDate,
-      registrationNumber,
-      importer,
-      profitShare,
-      officeIncome,
-      remarks,
-      bankName,
-      loan,
+      buyerName: buyerName,
+      buyerAddress: buyerAddress,
+      phoneNumber: phoneNumber,
+      carName: carName,
+      showRoom: showRoom,
+      sale: sale,
+      condition: condition,
+      model: model,
+      registration: registration,
+      color: color,
+      buyPrice: buyPrice,
+      salePrice: salePrice,
+      cost: cost,
+      profit: profit,
+      investor: investor,
+      buyDate: buyDate,
+      bookingDate: bookingDate,
+      deliveryDate: deliveryDate,
+      registrationNumber: registrationNumber,
+      importer: importer,
+      profitShare: profitShare,
+      officeIncome: officeIncome,
+      remarks: remarks,
+      bankName: bankName,
+      loan: loan,
+      file: file,
+      entryBy: entryBy,
     };
-    console.log(data);
-    e.target.reset();
+    let url = BASE_URL + "buyer-insert.php";
+    try {
+      const response = await axios.post(url, data, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (response) {
+        Swal.fire({
+          title: "Success!",
+          text: "Buyer Added Successfully!",
+          icon: "success",
+        });
+      }
+    } catch (error) {
+      console.error("Error uploading file", error);
+    }
+    // e.target.reset();
   };
 
   return (
@@ -313,7 +335,7 @@ const Form = () => {
           </div>
           <div className="relative z-0 w-full mb-5 group">
             <input
-              type="text"
+              type="number"
               name="buyPrice"
               id="floating_price"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -333,7 +355,7 @@ const Form = () => {
         <div className="grid md:grid-cols-2 md:gap-6">
           <div className="relative z-0 w-full mb-5 group">
             <input
-              type="text"
+              type="number"
               name="salePrice"
               id="floating_salePrice"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -350,7 +372,7 @@ const Form = () => {
           </div>
           <div className="relative z-0 w-full mb-5 group">
             <input
-              type="text"
+              type="number"
               name="cost"
               id="floating_cost"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
@@ -406,7 +428,7 @@ const Form = () => {
         <div className="grid md:grid-cols-2 md:gap-6">
           <div className="relative z-0 w-full mb-5 group">
             <input
-              type="text"
+              type="date"
               name="buyDate"
               id="floating_buyDate"
               className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"

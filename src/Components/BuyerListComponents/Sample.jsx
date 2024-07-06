@@ -11,9 +11,11 @@ const Sample = () => {
     let url =  BASE_URL+'sample.php';
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const formData = new FormData();
-    formData.append('file', file);
-
+    // const formData = new FormData();
+    // formData.append('file', file);
+const formData = {
+  file: file
+}
     try {
       const response = await axios.post(url, formData, {
         headers: {

@@ -3,6 +3,7 @@ import loginimg from "../../assets/image/login.jpg";
 import { useEffect, useState } from "react";
 import { LoginApi } from "../../apiRequest/LoginApi.jsx";
 import { useNavigate } from "react-router-dom";
+import logo from "../../assets/image/logo.png";
 
 const LoginComponent = () => {
   const navigate = useNavigate();
@@ -40,13 +41,27 @@ const LoginComponent = () => {
     <div>
       <div className="loginbg h-screen flex justify-center items-center">
         <div className="loginformbg grid grid-cos-1 md:grid-cols-2 gap-5 justify-center items-center">
-          <div>
+          <div style={{ position: "relative" }}>
             <img
               src={loginimg}
               style={{
                 objectFit: "cover",
                 borderTopRightRadius: "0px",
                 borderBottomRightRadius: "0px",
+              }}
+              className="h-[500px] w-full rounded-xl"
+            />
+
+            <img
+              src={logo}
+              style={{
+                objectFit: "contain",
+                borderTopRightRadius: "0px",
+                borderBottomRightRadius: "0px",
+                position: "absolute",
+                top: "0",
+                left: "50px",
+                width: "300px"
               }}
               className="h-[500px] w-full rounded-xl"
             />

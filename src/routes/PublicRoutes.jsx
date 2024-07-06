@@ -15,7 +15,7 @@ const PublicRoute = ({children}) => {
     }
     else{
 
-        return <Navigate to={from?from:'/profile'}></Navigate>
+        return <Navigate to={from?from:'/user/dashboard'}></Navigate>
     }
 };
 
