@@ -1,0 +1,100 @@
+.table-container {
+  max-width: 100%;
+  overflow-x: auto;
+  margin: 20px auto;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  background-color: #ffffff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+thead {
+  background-color: #f8f9fa;
+}
+
+thead th {
+  padding: 12px 15px;
+  border: 1px solid #dee2e6;
+  font-weight: 600;
+  text-align: left;
+  color: #495057;
+}
+
+tbody tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+tbody tr:hover {
+  background-color: #e9ecef;
+}
+
+tbody td {
+  padding: 12px 15px;
+  border: 1px solid #dee2e6;
+  color: #495057;
+}
+
+.table-container input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  font-size: 14px;
+  color: #495057;
+}
+
+input[type="text"]:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.cashbook-container {
+  padding: 20px;
+  background-color: #f9f9f9;
+}
+
+.table-container {
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.table-container th, .table-container td {
+  text-align: left;
+  padding: 10px;
+}
+
+.table-container th {
+  background-color: #c9cfd6;
+  color: white;
+}
+
+.pagination {
+  margin-top: 10px;
+  text-align: center;
+}
+
+.pagination-button {
+  margin: 0 5px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.pagination-button:hover {
+  background-color: #0056b3;
+}
+
+.pagination-button.active {
+  background-color: #0056b3;
+}

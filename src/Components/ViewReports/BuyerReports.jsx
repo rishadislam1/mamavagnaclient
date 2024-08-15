@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../../../public/config";
 import Swal from "sweetalert2";
+import { Link } from "react-router-dom";
 
 const BuyerReports = () => {
   const [buyers, setBuyers] = useState([]);
@@ -29,42 +30,45 @@ const BuyerReports = () => {
 
   useEffect(() => {
     // Filter buyers based on searchQuery
-    const filteredData = buyers.length>0&&buyers?.filter((buyer) => {
-      // Convert searchQuery to lowercase for case-insensitive search
-      const query = searchQuery.toLowerCase();
+    const filteredData =
+      buyers.length > 0 &&
+      buyers?.filter((buyer) => {
+        // Convert searchQuery to lowercase for case-insensitive search
+        const query = searchQuery.toLowerCase();
 
-      // Check if any field in the buyer object contains the query
-      return (
-        buyer.monthName.toLowerCase().includes(query) ||
-        buyer.buyerName.toLowerCase().includes(query) ||
-        buyer.address.toLowerCase().includes(query) ||
-        buyer.phoneNumber.toLowerCase().includes(query) ||
-        buyer.pdf.toLowerCase().includes(query) ||
-        buyer.carName.toLowerCase().includes(query) ||
-        buyer.showRoom.toLowerCase().includes(query) ||
-        buyer.carCondition.toLowerCase().includes(query) ||
-        buyer.bySale.toLowerCase().includes(query) ||
-        buyer.model.toLowerCase().includes(query) ||
-        buyer.registration.toLowerCase().includes(query) ||
-        buyer.color.toLowerCase().includes(query) ||
-        buyer.buyPrice.toLowerCase().includes(query) ||
-        buyer.salePrice.toLowerCase().includes(query) ||
-        buyer.cost.toLowerCase().includes(query) ||
-        buyer.profit.toLowerCase().includes(query) ||
-        buyer.investor.toLowerCase().includes(query) ||
-        buyer.buyDate.toLowerCase().includes(query) ||
-        buyer.bookingDate.toLowerCase().includes(query) ||
-        buyer.deliveryDate.toLowerCase().includes(query) ||
-        buyer.registrationNumber.toLowerCase().includes(query) ||
-        buyer.loanOrCash.toLowerCase().includes(query) ||
-        buyer.bankName.toLowerCase().includes(query) ||
-        buyer.importer.toLowerCase().includes(query) ||
-        buyer.profitShare.toLowerCase().includes(query) ||
-        buyer.officeIncome.toLowerCase().includes(query) ||
-        buyer.remarks.toLowerCase().includes(query) ||
-        buyer.entryBy.toLowerCase().includes(query)
-      );
-    });
+        // Check if any field in the buyer object contains the query
+        return (
+          buyer?.monthName?.toLowerCase().includes(query) ||
+          buyer?.buyerName?.toLowerCase().includes(query) ||
+          buyer?.address?.toLowerCase().includes(query) ||
+          buyer?.phoneNumber?.toLowerCase().includes(query) ||
+          buyer?.pdf?.toLowerCase().includes(query) ||
+          buyer?.carName?.toLowerCase().includes(query) ||
+          buyer?.showRoom?.toLowerCase().includes(query) ||
+          buyer?.carCondition?.toLowerCase().includes(query) ||
+          buyer?.bySale?.toLowerCase().includes(query) ||
+          buyer?.model?.toLowerCase().includes(query) ||
+          buyer?.registration?.toLowerCase().includes(query) ||
+          buyer?.color?.toLowerCase().includes(query) ||
+          buyer?.buyPrice?.toLowerCase().includes(query) ||
+          buyer?.salePrice?.toLowerCase().includes(query) ||
+          buyer?.cost?.toLowerCase().includes(query) ||
+          buyer?.profit?.toLowerCase().includes(query) ||
+          buyer?.investor?.toLowerCase().includes(query) ||
+          buyer?.buyDate?.toLowerCase().includes(query) ||
+          buyer?.bookingDate?.toLowerCase().includes(query) ||
+          buyer?.deliveryDate?.toLowerCase().includes(query) ||
+          buyer?.registrationNumber?.toLowerCase().includes(query) ||
+          buyer?.loanOrCash?.toLowerCase().includes(query) ||
+          buyer?.bankName?.toLowerCase().includes(query) ||
+          buyer?.importer?.toLowerCase().includes(query) ||
+          buyer?.profitShare?.toLowerCase().includes(query) ||
+          buyer?.officeIncome?.toLowerCase().includes(query) ||
+          buyer?.remarks?.toLowerCase().includes(query) ||
+          buyer?.entryBy?.toLowerCase().includes(query) ||
+          buyer?.chasingNumber?.toLowerCase().includes(query)
+        );
+      });
     setFilteredBuyers(filteredData);
   }, [searchQuery, buyers]);
 
@@ -92,7 +96,7 @@ const BuyerReports = () => {
           body: JSON.stringify({ id: id }),
         })
           .then((response) => response.text())
-          .then((data) => {
+          .then(() => {
             // Assuming the deletion is successful, update state
             // Filter out the deleted buyer from the current state
             const updatedBuyers = buyers.filter((buyer) => buyer.id !== id);
@@ -187,7 +191,7 @@ const BuyerReports = () => {
                 Buy Date
               </th>
               <th scope="col" className="px-6 py-3">
-                Booking Date
+                Selling Date
               </th>
               <th scope="col" className="px-6 py-3">
                 Deliv. Date
@@ -216,6 +220,19 @@ const BuyerReports = () => {
               <th scope="col" className="px-6 py-3">
                 Entry By
               </th>
+              <th scope="col" className="px-6 py-3">
+                Commission
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Commission Name
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Net Office Income
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Chassis Number
+              </th>
+
               <th scope="col" className="px-6 py-3">
                 Action
               </th>
@@ -247,7 +264,7 @@ const BuyerReports = () => {
                   ></object>
                   
                 </td> */}
-                  <td className="px-6 py-4">{buyer.pdf}</td>
+                  <td className="px-6 py-4"><Link to={`/user/pdf/${buyer.pdf}`} className="underline text-blue-600 font-bold">{buyer.pdf}</Link></td>
                   <td className="px-6 py-4">{buyer.carName}</td>
                   <td className="px-6 py-4">{buyer.showRoom}</td>
                   <td className="px-6 py-4">{buyer.carCondition}</td>
@@ -267,15 +284,26 @@ const BuyerReports = () => {
                   <td className="px-6 py-4">{buyer.loanOrCash}</td>
                   <td className="px-6 py-4">{buyer.bankName}</td>
                   <td className="px-6 py-4">{buyer.importer}</td>
-                  <td className="px-6 py-4">{buyer.profitShare}</td>
+                  <td className="px-6 py-4">
+                    {buyer?.shares?.length > 0 ? <div>{buyer.shares.map((share)=>
+                      <div key={share.id}><b>Name:</b> {share.name}, <b>Shareable Amount:</b> {share.percentage} tk <br/>---------</div>
+                    )}</div> : "No Profit Share"}
+                  </td>
                   <td className="px-6 py-4">{buyer.officeIncome}</td>
                   <td className="px-6 py-4">{buyer.remarks}</td>
                   <td className="px-6 py-4">{buyer.entryBy}</td>
+                  <td className="px-6 py-4">{buyer.commission}</td>
+                  <td className="px-6 py-4">{buyer.commissionName}</td>
+                  <td className="px-6 py-4">{buyer.netOfficeIncome}</td>
+                  <td className="px-6 py-4">{buyer.chasingNumber}</td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-5">
-                      <button className="bg-green-400 text-white px-2 py-1 rounded">
+                      <Link
+                        to={`/user/editBuyer/${buyer.id}`}
+                        className="bg-green-400 text-white px-2 py-1 rounded"
+                      >
                         Edit
-                      </button>
+                      </Link>
                       <button
                         className="bg-red-500 text-white px-2 py-1 rounded "
                         onClick={() => handleDelete(buyer.id)}

@@ -9,7 +9,7 @@ import { BASE_URL } from "../../../public/config";
 
 // eslint-disable-next-line react/prop-types
 const ProfileEdit = ({ profileData }) => {
-  console.log();
+
   const [userEmail, setUserEmail] = useState(profileData[0]?.email);
   const [name, setName] = useState(profileData[0]?.name);
   const [phone, setPhone] = useState(profileData[0]?.phone);
@@ -160,7 +160,7 @@ const ProfileEdit = ({ profileData }) => {
             id="website-admin"
             className="rounded-none rounded-e-lg bg-gray-50 border text-gray-900 focus:ring-blue-500 focus:border-blue-500 block flex-1 min-w-0 w-full text-sm border-gray-300 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-50"
             value={position}
-            onChange={(e) => setPosition(e.target.value)}
+     
             placeholder="phone number"
             disabled
           />

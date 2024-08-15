@@ -9,11 +9,16 @@ import { BASE_URL } from "../../../public/config";
 
 // eslint-disable-next-line react/prop-types
 const AddUserPage = () => {
-  console.log();
+ 
   const [userEmail, setUserEmail] = useState("");
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [position, setPosition] = useState("");
+
+  const handleValueChange = (e)=>{
+    setPosition(e.target.value);
+  }
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -145,13 +150,16 @@ const AddUserPage = () => {
           Select an option
         </label>
         <select
+          value={position}
+          onChange={handleValueChange}
           id="countries"
           className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
         >
-          <option selected>Choose a role</option>
-          <option value="user">user</option>
-          <option value="admin">admin</option>
-         
+          <option value="" disabled>
+            Choose a role
+          </option>
+          <option value="user">User</option>
+          <option value="admin">Admin</option>
         </select>
 
         {/* new password */}

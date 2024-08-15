@@ -2,7 +2,7 @@
 
 export default function useAuth(){
 
-    const auth = JSON.parse(localStorage.getItem("user"))
+    const auth = JSON.parse(sessionStorage.getItem("user"))
  
 
     if(auth?.data?.email){

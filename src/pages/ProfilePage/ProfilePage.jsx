@@ -4,7 +4,7 @@ import ProfileImage from "../../Components/Profile/ProfileImage";
 import { ProfileApi } from "../../apiRequest/ProfileApi";
 
 const ProfilePage = () => {
-    const user = JSON.parse(localStorage.getItem('user'));
+    const user = JSON.parse(sessionStorage.getItem('user'));
     const userEmail = user?.data?.email;
     const data = { userEmail: userEmail };
     const [profileData, setProfileData] = useState([]);

@@ -1,1 +1,1 @@
-export const BASE_URL='http://localhost/mamavagnaserver/'
+export const BASE_URL='https://mbclbd.com/mamavagnaserver/'

@@ -2,24 +2,32 @@ import { BiLogOut, BiMath, BiSolidReport, BiUser } from "react-icons/bi";
 import { CiBoxList } from "react-icons/ci";
 import { FaUser } from "react-icons/fa";
 import { Link, NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useState } from "react"; // Import useState hook
 import "./MainLayout.css";
 import logo from "../assets/image/logo.png";
+import { IoMdClose } from "react-icons/io";
+import { GiCash } from "react-icons/gi";
 
 const MainLayout = () => {
   const navigate = useNavigate();
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false); // State to control sidebar
+
   const handleLogout = () => {
-    localStorage.removeItem("user");
+    sessionStorage.removeItem("user");
     navigate("/");
   };
 
-  const userName = JSON.parse(localStorage.getItem("user"));
+  const userName = JSON.parse(sessionStorage.getItem("user"));
   const position = userName?.data?.position;
-  console.log(position)
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen); // Toggle sidebar visibility
+  };
+
   return (
     <div>
       <button
-        data-drawer-target="default-sidebar"
-        data-drawer-toggle="default-sidebar"
+        onClick={toggleSidebar} // Add onClick to toggle sidebar
         aria-controls="default-sidebar"
         type="button"
         className="inline-flex items-center p-2 mt-2 ms-3 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600"
@@ -42,13 +50,23 @@ const MainLayout = () => {
 
       <aside
         id="default-sidebar"
-        className="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+        className={`fixed top-0 left-0 z-40 w-64 h-screen transition-transform transform ${
+          isSidebarOpen ? "translate-x-0" : "-translate-x-full"
+        } sm:translate-x-0`}
         aria-label="Sidebar"
       >
         <div className="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-          <Link to="/user/dashboard">
-            <img src={logo} />
-          </Link>
+          <div className="flex justify-between">
+            <Link to="/user/dashboard">
+              <img src={logo} />
+            </Link>
+            {isSidebarOpen && (
+              <div onClick={toggleSidebar}>
+                {" "}
+                <IoMdClose className="text-3xl" />{" "}
+              </div>
+            )}
+          </div>
           <ul className="space-y-2 font-medium mt-10">
             <div className="mb-10">
               <li>
@@ -75,23 +93,23 @@ const MainLayout = () => {
                   <span className="ms-3">Dashboard</span>
                 </NavLink>
               </li>
-              {
-                position ==='admin'&&  <li className="mt-5">
-                <NavLink
-                  to="/user/addUser"
-                  className={({ isActive, isPending }) =>
-                    isPending
-                      ? "pending flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                      : isActive
-                      ? "active flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                      : "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
-                  }
-                >
-                  <BiUser/>
-                  <span className="ms-3">AddUser</span>
-                </NavLink>
-              </li>
-              }
+              {position === "admin" && (
+                <li className="mt-5">
+                  <NavLink
+                    to="/user/addUser"
+                    className={({ isActive, isPending }) =>
+                      isPending
+                        ? "pending flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                        : isActive
+                        ? "active flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                        : "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                    }
+                  >
+                    <BiUser />
+                    <span className="ms-3">AddUser</span>
+                  </NavLink>
+                </li>
+              )}
               <li>
                 <NavLink
                   to="/user/profile"
@@ -138,6 +156,23 @@ const MainLayout = () => {
                 >
                   <BiMath />
                   <span className="flex-1 ms-3 whitespace-nowrap">Ledger</span>
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  to="/user/cashbook"
+                  className={({ isActive, isPending }) =>
+                    isPending
+                      ? "pending flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                      : isActive
+                      ? "active flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                      : "flex items-center p-2 text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700 group"
+                  }
+                >
+                  <GiCash/>
+                  <span className="flex-1 ms-3 whitespace-nowrap">
+                    Add Cash Book
+                  </span>
                 </NavLink>
               </li>
               <li>

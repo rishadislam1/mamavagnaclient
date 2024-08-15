@@ -9,6 +9,11 @@ import ReportPage from "../pages/ReportPage/ReportPage.jsx";
 import PrivateRoute from "./PrivateRoutes.jsx";
 import PublicRoute from "./PublicRoutes.jsx";
 import AddUserPage from "../pages/AdduserPage/AddUserPage.jsx";
+import EditBuyer from "../pages/EditBuyer/EditBuyer.jsx";
+import MonthBasisBuyerList from "../Components/MonthBasisBuyerList/MonthBasisBuyerList.jsx";
+import PdfPage from "../pages/PdfPage/PdfPage.jsx";
+import ViewAllData from "../pages/Cashbook/ViewAllData.jsx";
+import CashbookMenuPage from "../pages/CashbookMenuPage/CashbookMenuPage.jsx";
 
 export const router = createBrowserRouter([
     {
@@ -18,6 +23,7 @@ export const router = createBrowserRouter([
     {
         path: '/user',
         element: <PrivateRoute><MainLayout/></PrivateRoute>,
+        // element:<MainLayout/>,
         children: [
             {
                 path: '/user/dashboard',
@@ -43,7 +49,26 @@ export const router = createBrowserRouter([
                 path: '/user/addUser',
                 element: <AddUserPage/>
             },
-            
+            {
+                path: '/user/editBuyer/:id',
+                element: <EditBuyer/>
+            },
+            {
+                path: '/user/month/:month/:year',
+                element: <MonthBasisBuyerList/>
+            },
+            {
+                path: '/user/pdf/:name',
+                element: <PdfPage/>
+            },
+            {
+                path: '/user/viewalldata',
+                element: <ViewAllData/>
+            },
+            {
+                path: '/user/cashbook',
+                element: <CashbookMenuPage/>
+            },
         ]
     }
 ])

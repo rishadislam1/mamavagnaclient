@@ -7,31 +7,23 @@ import logo from "../../assets/image/logo.png";
 
 const LoginComponent = () => {
   const navigate = useNavigate();
-  const [data, setData] = useState({});
   const [loginData, setLoginData] = useState({});
   const [message, setMessage] = useState("");
-  useEffect(() => {
-    const login = async () => {
-      const logData = await LoginApi(data);
 
-      setLoginData(logData);
-    };
-    login();
-  }, [data]);
-
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
     const form = e.target;
     const email = form.email.value;
     const password = form.password.value;
-    setData({ email: email, password: password });
+    const logData = await LoginApi({ email: email, password: password });
+    setLoginData(logData);
     form.reset();
   };
   useEffect(() => {
     if (loginData?.status === false) {
       setMessage(loginData.message);
     } else if (loginData?.status === true) {
-      localStorage.setItem("user", JSON.stringify(loginData));
+       sessionStorage.setItem("user", JSON.stringify(loginData));
       navigate("/user/dashboard");
       setMessage("");
     }
@@ -61,7 +53,7 @@ const LoginComponent = () => {
                 position: "absolute",
                 top: "0",
                 left: "50px",
-                width: "300px"
+                width: "300px",
               }}
               className="h-[500px] w-full rounded-xl"
             />
