@@ -1,46 +1,36 @@
-import { useState } from "react";
-import { FaCirclePlus } from "react-icons/fa6";
+import { useEffect, useState } from "react";
 import { BASE_URL } from "../../../public/config";
 import Swal from "sweetalert2";
+import { useParams } from "react-router-dom";
+import { CiLock, CiUnlock } from "react-icons/ci";
+import axios from "axios";
 
-const CashbookMenuPage = () => {
+const CashbookEdit = () => {
   const userName = JSON.parse(sessionStorage.getItem("user"));
   const entryBy = userName?.data?.name;
-  const [rows, setRows] = useState([
-    {
-      particularsCashIn: "",
-      voucherCashIn: "",
-      amountCashIn: "",
-      particularsCashOut: "",
-      voucherCashOut: "",
-      amountCashOut: "",
-    },
-  ]);
+  const {date} = useParams();
 
-  const formatDate = (date) => {
-    const d = new Date(date);
-    const month = `${d.getMonth() + 1}`.padStart(2, "0");
-    const day = `${d.getDate()}`.padStart(2, "0");
-    const year = d.getFullYear();
-    return `${year}-${month}-${day}`;
-  };
+  const [lock, setLock] = useState(true);
 
-  const date = formatDate(Date.now());
+  const [rows, setRows] = useState([]);
 
-  // Function to handle adding a new row
-  const addRow = () => {
-    setRows([
-      ...rows,
-      {
-        particularsCashIn: "",
-        voucherCashIn: "",
-        amountCashIn: "",
-        particularsCashOut: "",
-        voucherCashOut: "",
-        amountCashOut: "",
-      },
-    ]);
-  };
+//   get the data
+useEffect(()=>{
+    const fetchCashbookEntries = async (date) => {
+        try {
+          const response = await axios.get(`${BASE_URL}fetch_cashbook_entries.php`, {
+            params: { date }
+          });
+          setRows(response.data)  // Process the fetched data
+        } catch (error) {
+          console.error('Error fetching cashbook entries:', error);
+        }
+      };
+      
+      // Example usage
+      fetchCashbookEntries(date);
+},[date])
+
 
   // Function to handle input changes
   const handleChange = (index, field, value) => {
@@ -55,54 +45,51 @@ const CashbookMenuPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
   
-
     // Create a single object with all the data
     const formData = {
       rows,
       date,
       entryBy,
     };
-    e.target.reset();
+  
 
-    console.log(formData)
+   try {
+    let url = `${BASE_URL}cashbookUpdate.php`;
+    const response = await fetch(url, {
+      method: "PUT", // Use PUT method for updating data
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
 
-    try {
-      let url = BASE_URL + "cashbookentry.php";
-      const response = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Network response was not ok");
-      }
-
-      // Handle successful submission
-      Swal.fire({
-        title: "Success!",
-        text: "Cash Added Successfully!",
-        icon: "success",
-      });
-      // Optionally reset form fields or handle other UI changes
-    } catch (error) {
-      Swal.fire({
-        title: "Fail!",
-        text: "Something Wrong. Try again!",
-        icon: "error",
-      });
-      // Handle error, show user an error message, etc.
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
     }
+
+    // Handle successful submission
+    Swal.fire({
+      title: "Success!",
+      text: "Cash Updated Successfully!",
+      icon: "success",
+    });
+    // Optionally reset form fields or handle other UI changes
+  } catch (error) {
+    Swal.fire({
+      title: "Fail!",
+      text: "Something went wrong. Try again!",
+      icon: "error",
+    });
+    // Handle error, show user an error message, etc.
+  }
   };
+  
 
   return (
     <div>
       <h1 className="text-center underline my-10 font-bold text-3xl">
-        Add Daily Cash
+        Edit Daily Cash
       </h1>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center gap-5">
         <div className="relative z-0 w-full mb-5 group">
@@ -123,20 +110,39 @@ const CashbookMenuPage = () => {
             Date*
           </label>
         </div>
+        <div>
+            {
+                lock?<CiLock className="text-4xl text-red-600 font-bolder  cursor-pointer" title="please click for unlock edit" onClick={()=>setLock(!lock)} />:<CiUnlock className="text-4xl text-red-600 font-bolder  cursor-pointer" title="please click for lock edit" onClick={()=>setLock(!lock)}/>
+            }
+        </div>
       </div>
-      <button
-        className="focus:outline-none text-white bg-red-700 hover:bg-red-800 focus:ring-4 focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900 flex items-center gap-3"
-        onClick={addRow}
-      >
-        <FaCirclePlus />
-        Add Calculation
-      </button>
+    
       <div className="mt-10">
         <form onSubmit={handleSubmit} className="space-y-6">
           {rows.map((row, index) => (
             <div key={index}>
-              {/* Cash In */}
+              {/* ID In */}
               <div className="flex flex-col md:flex-row md:items-center gap-5">
+              <div className="relative z-0 w-full mb-5 group">
+                  <input
+                    type="text"
+                    name="particularsCashIn"
+                    id={`floating_bankingInformation_${index}`}
+                    className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
+                    placeholder=" "
+                    value={row.id}
+                    onChange={(e) =>
+                      handleChange(index, "id", e.target.value)
+                    }
+                    disabled
+                  />
+                  <label
+                    htmlFor={`floating_bankingInformation_${index}`}
+                    className="peer-focus:font-medium absolute text-sm text-gray-500 dark:text-gray-400 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 rtl:peer-focus:translate-x-1/4 peer-focus:text-blue-600 peer-focus:dark:text-blue-500 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6"
+                  >
+                    ID
+                  </label>
+                </div>
                 {/* particularsCashIn */}
                 <div className="relative z-0 w-full mb-5 group">
                   <input
@@ -149,6 +155,7 @@ const CashbookMenuPage = () => {
                     onChange={(e) =>
                       handleChange(index, "particularsCashIn", e.target.value)
                     }
+                    disabled={lock}
                   />
                   <label
                     htmlFor={`floating_bankingInformation_${index}`}
@@ -170,6 +177,7 @@ const CashbookMenuPage = () => {
                     onChange={(e) =>
                       handleChange(index, "voucherCashIn", e.target.value)
                     }
+                    disabled={lock}
                   />
                   <label
                     htmlFor={`floating_bankingInformation_${index}`}
@@ -191,6 +199,7 @@ const CashbookMenuPage = () => {
                     onChange={(e) =>
                       handleChange(index, "amountCashIn", e.target.value)
                     }
+                    disabled={lock}
                   />
                   <label
                     htmlFor={`floating_bankingInformation_${index}`}
@@ -216,6 +225,7 @@ const CashbookMenuPage = () => {
                     onChange={(e) =>
                       handleChange(index, "particularsCashOut", e.target.value)
                     }
+                    disabled={lock}
                   />
                   <label
                     htmlFor={`floating_bankingInformation_${index}`}
@@ -237,6 +247,7 @@ const CashbookMenuPage = () => {
                     onChange={(e) =>
                       handleChange(index, "voucherCashOut", e.target.value)
                     }
+                    disabled={lock}
                   />
                   <label
                     htmlFor={`floating_bankingInformation_${index}`}
@@ -258,6 +269,7 @@ const CashbookMenuPage = () => {
                     onChange={(e) =>
                       handleChange(index, "amountCashOut", e.target.value)
                     }
+                    disabled={lock}
                   />
                   <label
                     htmlFor={`floating_bankingInformation_${index}`}
@@ -271,9 +283,10 @@ const CashbookMenuPage = () => {
           ))}
           <button
             type="submit"
-            className="focus:outline-none text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            className={`focus:outline-none text-white  ${lock?"bg-slate-500":"bg-blue-700"} hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 `}
+          disabled={lock}
           >
-            Submit
+            Update
           </button>
         </form>
       </div>
@@ -281,4 +294,4 @@ const CashbookMenuPage = () => {
   );
 };
 
-export default CashbookMenuPage;
+export default CashbookEdit;
