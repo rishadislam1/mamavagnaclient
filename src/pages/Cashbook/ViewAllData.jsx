@@ -17,7 +17,6 @@ const ViewAllData = () => {
     const groupedData = {};
     data.forEach((row) => {
      
-
       // Ensure that 'date' is parsed correctly
       const rowDate = new Date(row.date); // Adjust the field to 'date' since that's the correct field name
       if (isNaN(rowDate.getTime())) {
@@ -51,7 +50,7 @@ const ViewAllData = () => {
 
         return (
           <div key={monthYearKey} className="monthly-table">
-            <h2 className="month-title">{`${monthName} ${year}`}</h2>
+            <h2 className="month-title font-bold text-2xl">{`${monthName} ${year}`}</h2>
             <table className="min-w-full border-collapse border table-container">
               <thead>
                 <tr>
