@@ -16,16 +16,26 @@ const ViewAllData = () => {
     // Group data by month and year
     const groupedData = {};
     data.forEach((row) => {
-      const rowDate = new Date(row.date1);
+     
+
+      // Ensure that 'date' is parsed correctly
+      const rowDate = new Date(row.date); // Adjust the field to 'date' since that's the correct field name
+      if (isNaN(rowDate.getTime())) {
+        console.error(`Invalid date: ${row.date}`);
+        return;
+      }
+
       const month = rowDate.getMonth();
       const year = rowDate.getFullYear();
-      const monthYearKey = `${year}-${month}`;
+      const monthYearKey = `${year}-${month + 1}`; // Correctly format month (month+1 for human readable)
 
       if (!groupedData[monthYearKey]) {
         groupedData[monthYearKey] = { rows: [], closingBalance: 0 };
       }
 
+
       groupedData[monthYearKey].rows.push(row);
+      console.log(row)
       groupedData[monthYearKey].closingBalance = row.closingBalance; // Last closing balance for the month
     });
 
@@ -36,12 +46,12 @@ const ViewAllData = () => {
     <div className="cashbook-container">
       {Object.keys(monthlyData).map((monthYearKey) => {
         const { rows, closingBalance } = monthlyData[monthYearKey];
-        const month = new Date(monthYearKey.split('-')[0], monthYearKey.split('-')[1]).toLocaleString('default', { month: 'long' });
-        const year = monthYearKey.split('-')[0];
+        const [year, month] = monthYearKey.split('-').map(Number); // Correctly parse the year and month
+        const monthName = new Date(year, month - 1).toLocaleString('default', { month: 'long' });
 
         return (
           <div key={monthYearKey} className="monthly-table">
-            <h2 className="month-title">{`${month} ${year}`}</h2>
+            <h2 className="month-title">{`${monthName} ${year}`}</h2>
             <table className="min-w-full border-collapse border table-container">
               <thead>
                 <tr>
@@ -59,14 +69,14 @@ const ViewAllData = () => {
               <tbody>
                 {rows.map((row, index) => (
                   <tr key={index}>
-                    <td className="border p-2">{row.date1}</td>
-                    <td className="border p-2">{row.particulars1}</td>
-                    <td className="border p-2">{row.voucher1}</td>
-                    <td className="border p-2">{row.amount1}</td>
-                    <td className="border p-2">{row.date2}</td>
-                    <td className="border p-2">{row.particulars2}</td>
-                    <td className="border p-2">{row.voucher2}</td>
-                    <td className="border p-2">{row.amount2}</td>
+                    <td className="border p-2">{new Date(row.date).toLocaleDateString()}</td> {/* Ensure the date is formatted correctly */}
+                    <td className="border p-2">{row.particularsCashIn}</td>
+                    <td className="border p-2">{row.voucherCashIn}</td>
+                    <td className="border p-2">{row.amountCashIn}</td>
+                    <td></td>
+                    <td className="border p-2">{row.particularsCashOut}</td>
+                    <td className="border p-2">{row.voucherCashOut}</td>
+                    <td className="border p-2">{row.amountCashOut}</td>
                   </tr>
                 ))}
                 {/* Add a new row for the closing balance */}

@@ -1,11 +1,11 @@
 import axios from "axios";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { BiPhone } from "react-icons/bi";
 import { CgPassword } from "react-icons/cg";
 import { MdPassword } from "react-icons/md";
-import { RiAdminFill } from "react-icons/ri";
 import Swal from "sweetalert2";
 import { BASE_URL } from "../../../public/config";
+import { Link } from "react-router-dom";
 
 // eslint-disable-next-line react/prop-types
 const AddUserPage = () => {
@@ -45,7 +45,7 @@ const AddUserPage = () => {
 
     try {
       let url = BASE_URL + "addUser.php";
-      const response = await axios.post(url, formData, {
+      await axios.post(url, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
@@ -205,6 +205,9 @@ const AddUserPage = () => {
           Save
         </button>
       </form>
+      <div className="my-10 flex justify-center">
+        <Link to='/user/allUser' className="bg-green-400 px-10 py-2 rounded-xl text-white hover:bg-transparent hover:border hover:border-green-400 hover:text-black transition-all duration-500">View All Users</Link>
+      </div>
     </div>
   );
 };
