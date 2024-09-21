@@ -6,6 +6,7 @@ import Swal from "sweetalert2";
 const CashbookMenuPage = () => {
   const userName = JSON.parse(sessionStorage.getItem("user"));
   const entryBy = userName?.data?.name;
+ 
   const [rows, setRows] = useState([
     {
       particularsCashIn: "",
@@ -24,8 +25,7 @@ const CashbookMenuPage = () => {
     const year = d.getFullYear();
     return `${year}-${month}-${day}`;
   };
-
-  const date = formatDate(Date.now());
+  const [date, setDate] = useState(formatDate(Date.now()))
 
   // Function to handle adding a new row
   const addRow = () => {
@@ -55,19 +55,14 @@ const CashbookMenuPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-  
-
     // Create a single object with all the data
     const formData = {
       rows,
       date,
       entryBy,
     };
+
     e.target.reset();
-
-    console.log(formData)
-
     try {
       let url = BASE_URL + "cashbookentry.php";
       const response = await fetch(url, {
@@ -107,14 +102,14 @@ const CashbookMenuPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 items-center gap-5">
         <div className="relative z-0 w-full mb-5 group">
           <input
-            type="dateInput"
+            type="date"
             name="date"
             id="floating_carDescription"
             className="block py-2.5 px-0 w-full text-sm text-gray-900 bg-transparent border-0 border-b-2 border-gray-300 appearance-none dark:text-white dark:border-gray-600 dark:focus:border-blue-500 focus:outline-none focus:ring-0 focus:border-blue-600 peer"
             placeholder=" "
             defaultValue={date}
+            onChange={(e)=>setDate(e.target.value)}
             required
-            disabled
           />
           <label
             htmlFor="floating_carDescription"
