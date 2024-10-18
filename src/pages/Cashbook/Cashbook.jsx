@@ -72,6 +72,7 @@ const Cashbook = () => {
     const data = await response.json();
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth() + 1;
+    
     const currentYear = currentDate.getFullYear();
 
   

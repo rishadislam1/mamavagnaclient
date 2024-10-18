@@ -16,6 +16,7 @@ import ViewAllData from "../pages/Cashbook/ViewAllData.jsx";
 import CashbookMenuPage from "../pages/CashbookMenuPage/CashbookMenuPage.jsx";
 import CashbookEdit from "../pages/CashbookEdit/CashbookEdit.jsx";
 import AllUsersPage from "../pages/AllUsers/AllUsersPage.jsx";
+import ViewAllCashData from "../pages/viewAllCashData/ViewAllCashData.jsx";
 
 export const router = createBrowserRouter([
     {
@@ -78,6 +79,10 @@ export const router = createBrowserRouter([
             {
                 path: '/user/allUser',
                 element: <AllUsersPage/>
+            },
+            {
+                path: '/user/cashdata/:month/:year',
+                element: <ViewAllCashData/>
             }
         ]
     }
