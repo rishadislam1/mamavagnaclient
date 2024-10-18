@@ -24,7 +24,7 @@ const LedgerReports = () => {
         console.error("Error fetching data:", error);
       });
   }, []);
-console.log(filteredEntries)
+
   // Calculate totals for debit, credit, and dues
   const groupedEntries = filteredEntries.map((person) => {
     let totalDebit = 0;
@@ -96,7 +96,8 @@ console.log(filteredEntries)
       const combinedFields = [
         person.name,
         ...person.entries.map((entry) =>
-          [entry.ledgerDate, entry.carDescription, entry.bankingInformation]
+          
+          [entry.ledgerDate, entry.carDescription, entry.bankingInformation, entry.chassisNumber]
             .filter(Boolean)
             .join(" ")
         ),
