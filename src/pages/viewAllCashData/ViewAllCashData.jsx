@@ -1,8 +1,5 @@
-
-
 import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom"; // Import useParams
-// import "./Cashbook.css";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { BASE_URL } from "../../../public/config";
@@ -28,12 +25,9 @@ const ViewAllCashData = () => {
     November: 11,
     December: 12
   };
-  
+
   const convertToDate = (dateStr) => {
-    // Regex to check if the date is in the format "YYYY-October-DD"
     const monthNameFormat = /^\d{4}-[a-zA-Z]+-\d{2}$/;
-    
-    // If dateStr is in the format "YYYY-October-DD"
     if (monthNameFormat.test(dateStr)) {
       const [year, monthName, day] = dateStr.split("-");
       const monthNames = {
@@ -50,22 +44,15 @@ const ViewAllCashData = () => {
         November: "11",
         December: "12"
       };
-      
-      // Convert the month name to a two-digit number
       const month = monthNames[monthName];
-      
-      // Return the date in the format YYYY-MM-DD
       return `${year}-${month}-${day}`;
     }
-    
-    // If already in the format YYYY-MM-DD, return as is
     return dateStr;
   };
 
-
   useEffect(() => {
     fetchCurrentMonthData();
-  }, [month, year]); // Dependency on month and year from URL
+  }, [month, year]);
 
   useEffect(() => {
     calculateTotals();
@@ -77,23 +64,17 @@ const ViewAllCashData = () => {
       try {
         const response = await axios.get(url);
         const data = response.data;
-
-        // Calculate the previous month and handle year change
-        let previousMonth = new Date(`${year}-${month}-01`).getMonth(); // Use month and year from URL
-  
+        let previousMonth = new Date(`${year}-${month}-01`).getMonth();
         if (previousMonth === 0) {
           previousMonth = 12; // December of the previous year
-        } 
-        else {
+        } else {
           previousMonth--;
         }
 
         const previousMonthData = data.filter(item => {
           const itemDate = new Date(item.date1);
-          
           return itemDate.getMonth() === previousMonth && itemDate.getFullYear() === parseInt(year);
         });
-        
 
         if (previousMonthData.length > 0) {
           previousMonthData.sort((a, b) => new Date(b.date1) - new Date(a.date1));
@@ -113,50 +94,41 @@ const ViewAllCashData = () => {
   const fetchCurrentMonthData = async () => {
     const response = await fetch(`${BASE_URL}get_cashbook.php`);
     const data = await response.json();
-   
     const currentMonthData = data.filter((row) => {
       const rowDate = new Date(row.date);
       return rowDate.getMonth() + 1 === monthNames[month] && rowDate.getFullYear() === parseInt(year);
     });
-    
 
     const initialRows = generateInitialRows();
 
     const groupedData = currentMonthData.reduce((acc, row) => {
       const rowDate = row.date;
-
       if (!acc[rowDate]) {
         acc[rowDate] = { ...row, amountCashIn: 0, amountCashOut: 0 };
       }
-
       acc[rowDate].amountCashIn += Number(row.amountCashIn);
       acc[rowDate].amountCashOut += Number(row.amountCashOut);
-
       return acc;
     }, {});
 
     const groupedDataArray = Object.values(groupedData);
-   
-    const mergedRows = initialRows.map((initialRow) => {
-       
-      const matchedRow = groupedDataArray.find(
-  (row) => convertToDate(row.date) === convertToDate(initialRow.date)
-);
 
-     console.log(convertToDate(groupedDataArray[0].date))
+    const mergedRows = initialRows.map((initialRow) => {
+      const matchedRow = groupedDataArray.find(
+          (row) => convertToDate(row.date) === convertToDate(initialRow.date)
+      );
       return matchedRow ? { ...matchedRow, isSaved: false } : initialRow;
     });
-    
+
     setRows(mergedRows);
   };
-  
+
   function generateInitialRows() {
-    const daysInMonth = new Date(parseInt(year), monthNames[month], 0).getDate(); // Use month and year from URL
+    const daysInMonth = new Date(parseInt(year), monthNames[month], 0).getDate();
 
     const rows = [];
     for (let i = 1; i <= daysInMonth; i++) {
       const dayString = `${year}-${month.padStart(2, "0")}-${i.toString().padStart(2, "0")}`;
-
       rows.push({
         date: dayString,
         particularsCashIn: "",
@@ -168,7 +140,7 @@ const ViewAllCashData = () => {
         isSaved: false,
       });
     }
-   
+
     return rows;
   }
 
@@ -180,53 +152,80 @@ const ViewAllCashData = () => {
 
   const calculateTotals = () => {
     const total1 = rows.reduce(
-      (acc, row) => acc + (parseFloat(row.amountCashIn) || 0),
-      0
+        (acc, row) => acc + (parseFloat(row.amountCashIn) || 0),
+        0
     );
     const total2 = rows.reduce(
-      (acc, row) => acc + (parseFloat(row.amountCashOut) || 0),
-      0
+        (acc, row) => acc + (parseFloat(row.amountCashOut) || 0),
+        0
     );
     setTotalamountCashIn(total1);
     setTotalamountCashOut(total2);
   };
+  const grandTotal = (Number(totalamountCashIn.toFixed(2)) + Number(closingBalance)) - Number(totalamountCashOut);
+
 
   const saveDataToServer = () => {
-    const grandTotal = (Number(totalamountCashIn.toFixed(2)) + Number(closingBalance)) - Number(totalamountCashOut);
-
-    fetch(`${BASE_URL}cashbook.php`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        rows: rows.filter(row => row.date === new Date().toISOString().slice(0, 10)),
-        closingBalance: grandTotal,
-      }),
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        return response.json();
+    const filteredRows = rows.filter(row => row.date === new Date().toISOString().slice(0, 10));
+    if (filteredRows.length === 0) {
+      // If no data for the current date, send the last date of the month and the closing balance
+      const lastDateOfMonth = `${year}-${month.padStart(2, "0")}-${new Date(year, monthNames[month], 0).getDate()}`;
+      fetch(`${BASE_URL}cashbook.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          rows: [],
+          closingBalance: grandTotal,
+          lastDateOfMonth: lastDateOfMonth,
+        }),
       })
-      .then((data) => {
-        if (data.message) {
-          Swal.fire({
-            title: "Success!",
-            text: data.message,
-            icon: "success",
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message) {
+              Swal.fire({
+                title: "Success!",
+                text: data.message,
+                icon: "success",
+              });
+            } else {
+              console.error(data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
           });
-        } else if (data.error) {
-          console.error(data.error);
-        }
+    } else {
+      // Send normal data to server
+      fetch(`${BASE_URL}cashbook.php`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          rows: rows.filter(row => row.date === new Date().toISOString().slice(0, 10)),
+          closingBalance: closingBalance,
+        }),
       })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.message) {
+              Swal.fire({
+                title: "Success!",
+                text: data.message,
+                icon: "success",
+              });
+            } else {
+              console.error(data.error);
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+    }
   };
 
-  const grandTotal = (Number(totalamountCashIn.toFixed(2)) + Number(closingBalance)) - Number(totalamountCashOut);
 
   return (
     <div>
@@ -355,18 +354,18 @@ const ViewAllCashData = () => {
         </tr>
       </tbody>
     </table>
-    <div className="w-full flex justify-center items-center mt-4">
-      <Link to="/user/viewalldata" className="rounded-lg text-white bg-blue-500 px-4 py-2 mx-2">
-        view All Data
-      </Link>
-      <button
-        className="rounded-lg text-white bg-blue-500 px-4 py-2 mx-2"
-        onClick={saveDataToServer}
-      >
-        Save
-      </button>
+      <div className="w-full flex justify-center items-center mt-4">
+        <Link to="/user/viewalldata" className="rounded-lg text-white bg-blue-500 px-4 py-2 mx-2">
+          view All Data
+        </Link>
+        <button
+            className="rounded-lg text-white bg-blue-500 px-4 py-2 mx-2"
+            onClick={saveDataToServer}
+        >
+          Save
+        </button>
+      </div>
     </div>
-  </div>
   );
 };
 
