@@ -167,9 +167,15 @@ const ViewAllCashData = () => {
 
   const saveDataToServer = () => {
     const filteredRows = rows.filter(row => row.date === new Date().toISOString().slice(0, 10));
+
     if (filteredRows.length === 0) {
-      // If no data for the current date, send the last date of the month and the closing balance
-      const lastDateOfMonth = `${year}-${month.padStart(2, "0")}-${new Date(year, monthNames[month], 0).getDate()}`;
+      // Find the last date with data (where amountCashIn and amountCashOut are not empty)
+      const lastDateWithData = rows
+          .filter(row => row.amountCashIn !== "" && row.amountCashOut !== "")
+          .reduce((latestDate, row) => {
+            return new Date(row.date) > new Date(latestDate) ? row.date : latestDate;
+          }, rows[0].date); // Initial date in case there's no matching data
+
       fetch(`${BASE_URL}cashbook.php`, {
         method: "POST",
         headers: {
@@ -178,7 +184,7 @@ const ViewAllCashData = () => {
         body: JSON.stringify({
           rows: [],
           closingBalance: grandTotal,
-          lastDateOfMonth: lastDateOfMonth,
+          lastDateOfMonth: lastDateWithData,  // Use the last date with data
         }),
       })
           .then((response) => response.json())
@@ -205,7 +211,7 @@ const ViewAllCashData = () => {
         },
         body: JSON.stringify({
           rows: rows.filter(row => row.date === new Date().toISOString().slice(0, 10)),
-          closingBalance: closingBalance,
+          closingBalance: grandTotal,
         }),
       })
           .then((response) => response.json())
@@ -225,6 +231,8 @@ const ViewAllCashData = () => {
           });
     }
   };
+
+
 
 
   return (
