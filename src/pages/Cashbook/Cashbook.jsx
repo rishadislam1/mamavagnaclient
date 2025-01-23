@@ -28,7 +28,7 @@ const Cashbook = () => {
   
         // Get the current date and determine the previous month
         const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
+        // const currentYear = currentDate.getFullYear();
         let previousMonth = currentDate.getMonth(); // 0-indexed (0 for January, 11 for December)
   
         // Calculate the previous month and handle year change
@@ -41,16 +41,25 @@ const Cashbook = () => {
         // Filter data for the previous month of the current year (or previous year if necessary)
         const previousMonthData = data.filter(item => {
           const itemDate = new Date(item.date1);
-          return itemDate.getMonth() === previousMonth && itemDate.getFullYear() === currentYear;
+          
+          // Get the current date
+          const currentDate = new Date();
+          
+          // Calculate the previous month and year
+          const previousMonth = currentDate.getMonth() === 0 ? 11 : currentDate.getMonth() - 1;
+          const previousMonthYear = currentDate.getMonth() === 0 ? currentDate.getFullYear() - 1 : currentDate.getFullYear();
+        
+          return itemDate.getMonth() === previousMonth && itemDate.getFullYear() === previousMonthYear;
         });
-  
+        
+
         if (previousMonthData.length > 0) {
           // Sort the filtered data by date in descending order
           previousMonthData.sort((a, b) => new Date(b.date1) - new Date(a.date1));
   
           // Get the last closing balance from the previous month
           const lastClosingBalance = previousMonthData[0].closingBalance;
-          console.log("Last Closing Balance of Previous Month:", lastClosingBalance);
+         
           setClosingBalance(Number(lastClosingBalance))
           // You can now use this closing balance in your component state or pass it as needed
         } else {
@@ -156,7 +165,7 @@ const Cashbook = () => {
 
   const saveDataToServer = () => {
     const grandTotal = (Number(totalamountCashIn.toFixed(2)) + Number(closingBalance)) - Number(totalamountCashOut);
-  console.log(rows.filter(row => row.date === new Date().toISOString().slice(0, 10)))
+  
     fetch(`${BASE_URL}cashbook.php`, {
       method: "POST",
       headers: {
@@ -175,7 +184,7 @@ const Cashbook = () => {
       })
       .then((data) => {
         if (data.message) {
-          console.log(data.message);
+          
           Swal.fire({
             title: "Success!",
             text: data.message,
