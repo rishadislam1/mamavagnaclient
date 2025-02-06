@@ -71,10 +71,31 @@ const ViewAllCashData = () => {
           previousMonth--;
         }
 
+
+        const pathSegments = window.location.pathname.split('/');
+        const currentMonthName = pathSegments[pathSegments.length - 2]; // 'December'
+        const currentYear = parseInt(pathSegments[pathSegments.length - 1]); // 2024
+
+// Convert month name to month index (0-based)
+        const monthNames = [
+          'January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        const currentMonthIndex = monthNames.indexOf(currentMonthName);
+
+// Calculate previous month and year
+        const previousMonthIndex = currentMonthIndex === 0 ? 11 : currentMonthIndex - 1;
+        const previousMonthYear = currentMonthIndex === 0 ? currentYear - 1 : currentYear;
+
+// Filter data for the previous month
         const previousMonthData = data.filter(item => {
           const itemDate = new Date(item.date1);
-          return itemDate.getMonth() === previousMonth && itemDate.getFullYear() === parseInt(year);
+          return itemDate.getMonth() === previousMonthIndex && itemDate.getFullYear() === previousMonthYear;
         });
+        // const previousMonthData = data.filter(item => {
+        //   const itemDate = new Date(item.date1);
+        //   return itemDate.getMonth() === previousMonth && itemDate.getFullYear() === parseInt(year);
+        // });
 
         if (previousMonthData.length > 0) {
           previousMonthData.sort((a, b) => new Date(b.date1) - new Date(a.date1));
